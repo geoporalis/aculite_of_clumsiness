@@ -11,6 +11,7 @@ with open(Path(dir/'input').resolve() ,'r') as f:
 # print(listOfData[:10])
 save_reports = 0
 nope_reports = 0
+unknown_reports = 0
 for report in listOfData: #[:5]:
     report_data = [int(x) for x in report.strip('/n').split(' ')]
     report_data_diff = []
@@ -25,9 +26,11 @@ for report in listOfData: #[:5]:
     else:
         if report_data_diff.count(1) == len(report_data_diff) or report_data_diff.count(1) == 0:
             save_reports += 1
+        else:
+            # print(report_data, '\t\t', report_data_diff, '\t\t', report_data_diff.count(1), len(report_data_diff))
+            nope_reports += 1
         # continue
 
 
-print(Fore.GREEN, save_reports, Fore.RED, nope_reports, Fore.RESET, save_reports+nope_reports) # 3363 is to high
-    # print(report_data, report_data_diff)
+print(Fore.GREEN, save_reports, Fore.RED, nope_reports, Fore.YELLOW, unknown_reports, Fore.RESET, save_reports+nope_reports+unknown_reports) # 3363 is to high
     # [int(X) for x in report]
