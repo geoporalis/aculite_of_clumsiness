@@ -1,122 +1,194 @@
 from pathlib import Path
 from colorama import Fore
 
-import math
-listOfData = []
 dir = Path(__file__).parent.resolve()
+file = Path(dir/'input').resolve() 
+example = Path(dir/'example').resolve()
 
-with open(Path(dir/'order').resolve() ,'r') as f:
-    orderList = [x.strip('\n').split("|") for x in f.readlines()]
-with open(Path(dir/'pages').resolve() ,'r') as f:
-    pagesList = [x.strip('\n') for x in f.readlines()]
+lines = [l.strip() for l in open(file).readlines()]
+lines = [l.strip() for l in open().readlines()]
 
-the_good = []
-def goodNbaad(orderList, pagesList):
-    for order in orderList:
-        for i, page in enumerate(pagesList):
-            if 'x' in page:
-                continue
-            if order[0] in page and order[1] in page:
-                if page.find(order[0]) < page.find(order[1]):
-                    pagesList[i] = pagesList[i].strip('+')+'+'
-                else:
-                    pagesList[i] = pagesList[i].strip('+')+'x'
-    return pagesList
+len_x = len(lines)
+len_y = len(lines[0])
+
+obstacle = '#'
+direction = 0
+
+def changeDirection(direction = direction):
+    return (direction+1)%4
 
 
+# print(changeDirection(3))
 
-gnbList = goodNbaad(orderList, pagesList)
-good_pages = [page for page in gnbList if '+' in page]
-bad_pages = [page.strip('x') for page in gnbList if 'x' in page]
+area = []
+gy=-1
+gx=-1
+for x, row in enumerate(lines):
+    if gy<0:
+        gy = row.find('^')
+        gx=x
+    area.append([c for c in row.strip()])
 
-print(len(good_pages), len(bad_pages), len(gnbList))
+def stillGuarding(gx=gx, gy=gy, area_x=len_x, area_y=len_y):
+    return False if gx < 0 or gy < 0 or gx >= area_x or gy >=area_y else True  
 
-routing = 0
-for page in good_pages:
-    if '+' in page:
-        m = math.floor((len(page)-1)/2)
-        routing +=int(page[m-1:m+1])
-print(routing) #7307
+def takeAStep(x,y, d=direction):
+    if d == 0: #dir = up
+        x-=1
+    elif d == 1: #dir = right
+        y+=1
+    elif d == 2: #dir = down
+        x+=1
+    elif d == 3: #dir = left
+        y-=1
+    else:
+        print('wrong direction')
+        exit()
+    return (x,y)
+def printArea(area=area):
+    x_count = 0
+    for row in area:
+        for col in row:
+            if col == '.':
+                print(Fore.LIGHTBLACK_EX, end='')
+            elif col == obstacle:
+                print(Fore.RED,end='')
+            elif col == 'X':
+                x_count += 1
+                print(Fore.GREEN, end='')
+            else:
+                print(Fore.YELLOW,end='')
+            print(col,end='')
+        print('')
+    # input('waiting')
+    print(Fore.RESET)
+    return x_count
 
+step_count=0
+while True:
+    # direction_changed = False
+    while True:    
+        cx, cy = takeAStep(gx, gy, direction)
+        try:
+            if area[cx][cy] == changeDirection(direction):
+                step_count += 1
+        except:
+            pass
+        try:
+            if area[cx][cy] == obstacle:
+                direction = changeDirection(direction)
+                # direction_changed = True
+                # area[gx][gy] = '+'
 
-# my half solution
-relevantList=[]
-for p, page in enumerate(bad_pages):
-    relevant = []
-    for order in orderList:
-        if order[0] in bad_pages[p] and order[1] in bad_pages[p]:
-            relevant.append(order)
-    relevantList.append(relevant)
-
-new_page_s = []
-for relSubList in relevantList:
-    new_page=[]
-    for rel in relSubList:
+                # printArea()
+            else:
+                [gx, gy] = [cx, cy]
+                # step_count+=1
+                break               
+        except:
+            [gx, gy] = [cx, cy]
+            # step_count+=1
+            break
         
-        if not rel[0] in new_page:
-            new_page.insert(0, rel[0])
-        if not rel[1] in new_page:
-            new_page.insert(-1, rel[1])
 
-        lidx = new_page.index(rel[0])    
-        ridx = new_page.index(rel[1])    
-        if ridx < lidx:
-            el = new_page.pop(lidx)
-            new_page.insert(ridx, el)
-    new_page_s.append(",".join(new_page))
+    if not stillGuarding(gx, gy):
+        break
+    # if direction_changed:
+    if direction == 0:
+        area[gx][gy] = 0
+    elif direction == 1:
+        area[gx][gy] = 1
+    elif direction == 2:
+        area[gx][gy] = 2
+    else:
+        area[gx][gy] = 3
 
-ordering = [[int(o[0]), int(o[1])] for o in orderList]
-wrong_sequences = [list(map(int, line.split(","))) for line in bad_pages]
+    #peek
 
+print(printArea())
+print(step_count)
+# part 1: 5199
+# part 2:
+# 312 # to low
 
-# from some one else (bubble sort)
-changes = True
-while changes:
-	changes = False
-	for i, sequence in enumerate(wrong_sequences):
-		for rule in ordering:
-			first_ix = 0
-			second_ix = 0
-			if rule[0] in sequence and rule[1] in sequence:
-				first_ix = sequence.index(rule[0])
-				second_ix = sequence.index(rule[1])
-				if first_ix > second_ix:
-					wrong_sequences[i][first_ix], wrong_sequences[i][second_ix] = wrong_sequences[i][second_ix], wrong_sequences[i][first_ix]
-					changes = True
-					sequence = wrong_sequences[i]
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# G = {i+j*1j: c for i,r in enumerate(open(file))
+#                for j,c in enumerate(r.strip())}
 
-total = 0
-for sequence in wrong_sequences:
-	middle_num = sequence[len(sequence)//2]
-	total += middle_num
+# start = min(p for p in G if G[p] == '^')
 
-print(Fore.YELLOW, total, Fore.RESET)    
+# def walk(G):
+#     pos, dir, seen = start, -1, set()
+#     while pos in G and (pos,dir) not in seen:
+#         seen |= {(pos,dir)}
+#         if G.get(pos+dir) == "#":
+#             dir *= -1j
+#         else: pos += dir
+#     return {p for p,_ in seen}, (pos,dir) in seen
 
-# yet anoter solution
-def isOrderd(sequence):
-    for rule in ordering:
-        if rule[0] in sequence and rule[1] in sequence:
-            first_ix = sequence.index(rule[0])
-            second_ix = sequence.index(rule[1])
-            if first_ix > second_ix:
-                return False
-    return True
+# path = walk(G)[0]
+# print(len(path))
+# print(sum(walk(G | {o: '#'})[1] for o in path))
 
-wrong_again_sequences = [list(map(int, line.split(","))) for line in bad_pages]
+#~~~~~~~~~~~~~~~~~~~~~
+inp = open(file).read() #utils.get_input(day=6)
+sample_inp = """....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...
+"""
+# inp = sample_inp
+# DIRS = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+# d = 0
 
-correct_sequence = []
-for pages in wrong_again_sequences:
-    while not isOrderd(pages):
-        for i in range(len(pages)):
-            for j in range(i+1, len(pages)):
-                if [pages[j], pages[i]] in ordering:
-                    pages[j], pages[i] = pages[i], pages[j]    
-    correct_sequence.append(pages)
+# rows = inp.strip().split("\n")
 
-total = 0
-for sequence in correct_sequence:
-	middle_num = sequence[len(sequence)//2]
-	total += middle_num
+# # This is abusive, please don't do this
+# INDICES = {x: {y: 0 for y in range(len(rows))} for x in range(len(rows[0]))}
 
-print(Fore.MAGENTA, total, Fore.RESET)  
-# 4672 to low      
+# pos = None
+# walls = set()
+# for x, row in enumerate(rows):
+#     for y, c in enumerate(row):
+#         if c == "#":
+#             walls.add((x, y))
+#         if c == "^":
+#             pos = (x, y)
+# assert pos is not None
+
+# def traverse_map(walls, spos):
+#     seen = {(spos, 0)}
+#     pos = spos
+#     d = 0
+#     try:
+#         while True:
+#             pos_ = (pos[0] + DIRS[d][0], pos[1] + DIRS[d][1])
+#             if pos_ in walls:
+#                 d = (d + 1) % 4
+#                 continue
+#             INDICES[pos_[0]][pos_[1]]
+#             if (pos_, d) in seen:
+#                 return None
+#             seen.add((pos_, d))
+#             pos = pos_
+#     except KeyError:
+#         return seen
+
+# seen = traverse_map(walls, pos)
+# assert seen is not None
+# allseen = set(p[0] for p in seen)
+# print(len(allseen))#, day=6, append=0, w=1)
+
+# impossible = 0
+# for p in allseen:
+#     if p in walls or p == pos:
+#         continue
+#     if traverse_map(walls.union({p}), pos) is None:
+#         impossible += 1
+# print(impossible)#, day=6, append=1, w=1)
