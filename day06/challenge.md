@@ -97,4 +97,4 @@ Predict the path of the guard. How many distinct positions will the guard visit 
 
 To begin, get your puzzle input.
 
-Answer: 
+Answer: 5199

@@ -6,7 +6,7 @@ file = Path(dir/'input').resolve()
 example = Path(dir/'example').resolve()
 
 lines = [l.strip() for l in open(file).readlines()]
-lines = [l.strip() for l in open().readlines()]
+# lines = [l.strip() for l in open().readlines()]
 
 len_x = len(lines)
 len_y = len(lines[0])
