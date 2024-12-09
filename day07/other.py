@@ -5,10 +5,15 @@ from collections import namedtuple
 import itertools
 from operator import add, mul
 
+from pathlib import Path
+
+dir = Path(__file__).parent.resolve()
+file = Path(dir/'input').resolve()
+
 equations = []
 Equation = namedtuple('Equation', ['target', 'args'])
 
-for line in sys.stdin:
+for line in open(file).readlines():
   eq, args = line.strip().split(': ')
   equations.append(Equation(int(eq), list(map(int, args.split(' ')))))
 
@@ -34,4 +39,4 @@ def part2():
   return sum(find(eq, (add, mul, cat)) for eq in equations)
 
 print(part1())
-print(part2())
+# print(part2())
