@@ -1,6 +1,12 @@
-import sys
+from pathlib import Path
 
-area = { (x, y): c for y, l in enumerate(open(sys.argv[1]).readlines()) 
+example = True  #False  #
+
+dir = Path(__file__).parent.resolve()
+
+file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
+
+area = { (x, y): c for y, l in enumerate(open(file).readlines()) 
                    for x, c in enumerate(l.strip()) }
 
 directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]

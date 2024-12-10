@@ -1,7 +1,5 @@
-from pathlib import Path
 from colorama import Fore
-
-import re
+from pathlib import Path
 
 example = False  #True  #
 
