@@ -1,10 +1,17 @@
 #!/usr/bin/env pypy3
 
-import sys
+# import sys
 from collections import defaultdict
 import itertools
+from pathlib import Path
 
-lines = sys.stdin.read().strip().split('\n')
+example = True  #False  #
+
+dir = Path(__file__).parent.resolve()
+file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
+
+lines = open(file).read().strip().split('\n')
+# lines = sys.stdin.read().strip().split('\n')
 
 h = len(lines)
 w = len(lines[0])
