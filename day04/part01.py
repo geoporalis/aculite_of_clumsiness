@@ -1,7 +1,6 @@
 from pathlib import Path
 from colorama import Fore
 import numpy as np
-from scipy.ndimage import rotate
 
 import re
 
