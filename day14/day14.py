@@ -41,13 +41,11 @@ def moveRobot(robot, seconds):#%w, \
     while ny < 0: ny += h
     ny = ny%h
 
-    return getQuadrant(nx, ny)
+    return getQuadrant(nx, ny)  #
+# part 01
 
-after100s = [moveRobot(robot, 100) for robot in robots]
+after100s = [moveRobot(robot, 7700) for robot in robots]
 
 quads100s = [after100s.count(i) for i in range(0,5)]
 
-print(quads100s, math.prod(quads100s[1:]))
-# p=
-# \sv=(\d{1,})
-# 
+print(quads100s, math.prod(quads100s[1:])) # 232253028
