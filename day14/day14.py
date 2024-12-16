@@ -2,7 +2,7 @@ import re, math
 from colorama import Fore
 from pathlib import Path
 
-example = True  #False  #
+example = False  #True  #
 
 dir = Path(__file__).parent.resolve()
 file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
@@ -14,7 +14,6 @@ robots = [ {'px': int(claw[0]), 'py': int(claw[1]),
            'dx': int(claw[2]), 'dy': int(claw[3]),
            } for claw in re.findall(pattern, open(file).read())]
 
-# print(robots)
 w = 11 if example else 101 # x-axis
 h = 7 if example else 103 # y-axis
 
@@ -23,7 +22,7 @@ wm = w-wq-1
 hq = h//2
 hm = h-hq-1
 
-print(wq, wm,'||', hq, hm)
+# print(wq, wm,'||', hq, hm)
 
 def getQuadrant(nx, ny):
     if nx == (wm) or ny == (hm):
@@ -36,29 +35,11 @@ def getQuadrant(nx, ny):
 def moveRobot(robot, seconds):#%w, \
     nx, ny =    (robot['px'] + robot['dx']*seconds), (robot['py'] + robot['dy']*seconds) #%h
 
-    if nx >= 0:
-        nx = nx%w
-    else:
-        nx = w- ( nx%w)
-        # print('x:', nx, nx%w, nx//w)
+    while nx < 0: nx += w
+    nx = nx%w
 
-    if ny >= 0:
-        ny = ny%h
-    else:
-        ny = h-(ny%h)
-        # print('y:',ny, ny%h, ny//h)
-
-    # nx = nx%w if nx >= 0 else nx - ((nx//w))*w
-    # ny = ny%h if ny >= 0 else ny - ((ny//h))*h
-    
-    cx = Fore.RED if nx == wm else Fore.RESET
-    cy = Fore.RED if ny == hm else Fore.RESET
-
-    print(cx, nx, cy, ny, Fore.RESET )
-
-
-    nx += w if nx < 0 else 0
-    ny += h if ny < 0 else 0
+    while ny < 0: ny += h
+    ny = ny%h
 
     return getQuadrant(nx, ny)
 
