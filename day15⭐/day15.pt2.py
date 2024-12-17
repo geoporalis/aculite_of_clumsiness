@@ -77,7 +77,7 @@ def canImoveThatCrateLR(pos, mov):
     if area[(nx, ny)] in crate:
         canImoveThatCrateLR((nx, ny), mov)
     if area[(nx, ny)] == free:
-        area[(nx, ny)] = crate
+        area[(nx, ny)] = area[pos]
         area[pos] = free
 
 def spreadTree(pos):
