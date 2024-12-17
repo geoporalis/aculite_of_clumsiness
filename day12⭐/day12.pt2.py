@@ -4,7 +4,7 @@ import math
 
 from pathlib import Path
 
-example = False  #True  #
+example = True  #False  #
 
 dir = Path(__file__).parent.resolve()
 file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
@@ -87,22 +87,53 @@ for field, value in grid.items():
     }
 
 i=0    
-for key in grid.keys():   
-    print(grid[key])
-    i+=1
-    if i > 15:
-        break
+# for key in grid.keys():   
+#     print(key, grid[key])
+#     i+=1
+#     if i > 15:
+#         break
+
 # group neighbors together
-neighborhoods = []
+neighborhoods = {}
 
-for field  in grid.keys():
-    for hoods in neighborhoods:
-        pass
+for field in grid.keys():
 
+    if not grid[field]['char'] in neighborhoods.keys():
+        neighborhoods[grid[field]['char']] = [[field]]
+    for h, hood in enumerate(neighborhoods[grid[field]['char']]):
+        if field in hood:
+            for neighbor in grid[field]['neigbours']:
+                if neighbor != (None, None):
+                    neighborhoods[grid[field]['char']][h].append(neighbor)
+nodoubles={}            
+for k, hoods in neighborhoods.items():
+    for i, h in enumerate(hoods):
+        nodoublhood = []
+        for f in h:
+            if not f in nodoublhood:
+                nodoublhood.append(f)
 
+        if not k in nodoubles.keys():
+            nodoubles[k] = []
+        nodoubles[k].append(nodoublhood) 
 
+neighborhoods = nodoubles
+
+# print(neighborhoods)    # [grid[field]['char']][h]
+lines = 0
+for k, hoods in neighborhoods.items():
+    for h in hoods:
+        lh = len(h)
+        if lh >0:
+            fence = sum([sum(grid[f]['corner']) for f in h])//3
+            ft = fence*lh
+            lines+= ft
+            print(k, lh,'*', fence,'=', ft)
+
+print(lines)
 
 exit()
+
 
 for x, line in enumerate(open(file).readlines()):
     for y, char in enumerate(line.strip()):
@@ -200,6 +231,8 @@ for char, plots in grid.items():
 print(Fore.RED,'Answer1: ',Fore.GREEN,part1,Fore.RESET)   #1930
 # 1486368 # too high
 # 1477924 *
+
+# pt2 841934
 
 '''
 R   12  18  216 

@@ -26,23 +26,15 @@ hm = h-hq-1
 # print(wq, wm,'||', hq, hm)
 
 def getQuadrant(nx, ny):
-
+    # 4 tiled safety factor
     # if nx == (wm) or ny == (hm):
     #     return 0  
     # q = 1 if nx < wm else 2
     # q += 2 if ny > hm else 0
-    q = 0
-    if nx < wt:
-        q=1
-    if wt < nx < 2*wt:
-        q=2
-    if wt > 2*wt:
-        q=3
-    if ht < ny < 2*ht:
-        q+=3
-    if ny > 2*ht:
-        q+=6
 
+    # 9 tiled saftey factor
+    q = 1 if nx < wt else 2 if wt < nx < 2*wt else 3
+    q+= 0 if ny < ht else 3 if ht < ny < 2*ht else 6
 
     return q        
 
@@ -90,22 +82,7 @@ print(mini, minsf)
 # 8886
 # 8179
 
-
-
-
 # part 02
 # ? safety factory reciproc entropy ?
 # ?variance 
 # ?chinese remainder theroem
-
-# for s in range(7500, 8800):
-#     moved = [moveRobot(robot, s) for robot in robots]
-#     count = [moved.count(i)      for i in range(0,5)]
-#     if math.prod(count) == 0:
-#         print(s, count)
-#         input()
-#     print('\r', s, end='')
-
-# p=
-# \sv=(\d{1,})
-# 
