@@ -4,7 +4,7 @@ import math
 
 from pathlib import Path
 
-example = True  #False  #
+example = False  #True  #
 
 dir = Path(__file__).parent.resolve()
 file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
@@ -86,81 +86,36 @@ for field, value in grid.items():
         'borders': borders,
     }
 
-i=0    
+# i=0    
 # for key in grid.keys():   
 #     print(key, grid[key])
 #     i+=1
 #     if i > 15:
 #         break
 
-# group neighbors together
-neighborhoods = {}
+group_char = {}
+for key, plot in grid.items():
+    if not plot['char'] in group_char:
+        group_char[plot['char']] = []
+    group_char[plot['char']].append(plot)
 
-for field in grid.keys():
-
-    if not grid[field]['char'] in neighborhoods.keys():
-        neighborhoods[grid[field]['char']] = [[field]]
-    for h, hood in enumerate(neighborhoods[grid[field]['char']]):
-        if field in hood:
-            for neighbor in grid[field]['neigbours']:
-                if neighbor != (None, None):
-                    neighborhoods[grid[field]['char']][h].append(neighbor)
-nodoubles={}            
-for k, hoods in neighborhoods.items():
-    for i, h in enumerate(hoods):
-        nodoublhood = []
-        for f in h:
-            if not f in nodoublhood:
-                nodoublhood.append(f)
-
-        if not k in nodoubles.keys():
-            nodoubles[k] = []
-        nodoubles[k].append(nodoublhood) 
-
-neighborhoods = nodoubles
-
-# print(neighborhoods)    # [grid[field]['char']][h]
-lines = 0
-for k, hoods in neighborhoods.items():
-    for h in hoods:
-        lh = len(h)
-        if lh >0:
-            fence = sum([sum(grid[f]['corner']) for f in h])//3
-            ft = fence*lh
-            lines+= ft
-            print(k, lh,'*', fence,'=', ft)
-
-print(lines)
-
-exit()
-
-
-for x, line in enumerate(open(file).readlines()):
-    for y, char in enumerate(line.strip()):
-        if not char in grid.keys():
-            grid[char] = []
-        grid[char] += [[(x,y),4]]
-
-
-
-
-
+# print(group_char)
 part1 = 0
-fences = 0
-plotgroups = { char : [] for char in grid.keys()}
-for char, plots in grid.items():
-    for  p, pl1 in enumerate(plots):
+part2 = 0
+plotgroups = { char : [] for char in group_char}
+for char, plots in group_char.items():
+    for pnum, plot in enumerate(plots):
         gnum = -1
         for gn, gr in enumerate(plotgroups[char]):
-            if pl1 in gr:
+            if plot in gr:
                 gnum = gn
                 break
         if gnum == -1:
             gnum=len(plotgroups[char])
-            plotgroups[char].append([pl1])
+            plotgroups[char].append([plot])
             # input(plotgroups[char])
         for pl2 in plots:
-            if  math.dist(pl1[0], pl2[0]) == 1: # < 2:  #
+            if  math.dist(plot['xy'], pl2['xy']) == 1: # < 2:  #
                 plotgroups[char][gnum].append(pl2)
 
     #merge groups
@@ -194,56 +149,22 @@ for char, plots in grid.items():
                 singl.append(plot1)
         singls.append(singl)
     plotgroups[char]= singls
-
+    # grouping should be done
 
     for gn, group in enumerate(plotgroups[char]):
         plotsfences = len(group)*4
-        for  pn1, pl1 in enumerate(group):
-            for  pn2, pl2 in enumerate(group):
-                if  math.dist(pl1[0], pl2[0]) == 1:
+        corners = 0
+        borders = 0
+        for plot in enumerate(group):
+            # print(plot)
+            corners += sum(plot[1]['corner'])
+            borders += plot[1]['borders']
+        part1border = len(group) * borders
+        part2border = len(group) * corners //3
+        part1 += part1border
+        part2 += part2border
 
-                    plotsfences-= 1  
-        groupfences = len(group) *  plotsfences
-        part1 += groupfences
-        print(char, len(group), plotsfences, groupfences )
-    #             plots[p][1] -= 1 
-    # plotsfences = sum(p[1] for p in plots)
-    # for pl in permutations(plots, 2):
-    #     input(pl)
-        # d = math.dist(pl1[0], pl2[1])
-        # if d == 1:
-        #     plotsfences -=1
-            # print(1, end = ' ')
-            # print(pl1, pl2)
+        print(char, len(group), borders, part1border, '||' , corners, part2border )
 
-
-
-    # part1 += plotsfences
-    # print(char, len(plots), plotsfences )
-# for pl in plotgroups['C']:
-#     print(len(pl))
-#     print(pl, '\n')
-# print()
-# for pl in plotgroups['F']:
-#     print(len(pl))
-#     print(pl, '\n')
-
-print(Fore.RED,'Answer1: ',Fore.GREEN,part1,Fore.RESET)   #1930
-# 1486368 # too high
-# 1477924 *
-
-# pt2 841934
-
-'''
-R   12  18  216 
-I    4   8   32
-I   14  22  308
-C   14  28  392
-C    1   4    4
-F   10  18  180
-V   13  20  260
-J   11  20  220
-E   13  18  234
-M    5  12   60
-S    3   8   24
-'''
+print('Answer1:', part1) # example: 1930 # input: 1477924 *
+print('Answer2:', part2) # example: 1206 # input:  841934 *      # mr.crazy: 841934

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-example = False  #True  #
+example = True  #False  #
 
 dir = Path(__file__).parent.resolve()
 file = Path(dir/'input').resolve() if not example else Path(dir/'example').resolve()
