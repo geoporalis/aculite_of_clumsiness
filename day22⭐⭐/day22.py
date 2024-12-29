@@ -1,10 +1,10 @@
 from colorama import Fore
 from functools import cache
 import json
-from pathlib import Path
 import sys
-
 sys.setrecursionlimit(2100)
+
+from pathlib import Path
 
 example = False  # True  #
 
