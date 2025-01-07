@@ -1,4 +1,3 @@
-import re
 from pathlib import Path
 
 example = True  #False # 
@@ -17,19 +16,23 @@ print(strt, end)
 # dtat = [tuple(map(int , re.findall(r'-?\d+',l))) for l in open(file).readlines()]
 
 dirs = [(0,1),(1,0),(0,-1),(-1,0)]
-
+fac = 0
 def path(limit):
     seen = {*wall[:]}
-    todo = [(0, strt)]
-    for d, (x, y) in todo:
+    todo = [(0, strt, 0)]
+    for d, (x,y), fac in todo:
         if (x,y) == end: return d
-        for x,y in (x,y+1), (x,y-1), (x+1,y), (x-1,y):
+        for f, dd in (fac, 1), ((fac+1)&4, 1000), ((fac+3)&4, 1000):    # (x,y+1), (x,y-1), (x+1,y), (x-1,y):
+            x,y = ( x + dirs[f][0], y + dirs[f][1])
             if (x,y) not in seen:
-                todo.append((d+1, (x,y)))
+                todo.append((d+dd, (x,y), f))
                 seen.add((x,y))
-    return 1e23
+
+    return d
 
 print(path(1024))  
+
+# for x,y in (x,y+1), (x,y-1), (x+1,y), (x-1,y):
 
 # for l in range(1024,len(dtat)):
 #     if path(l) == 1e23:
